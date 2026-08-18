@@ -33,14 +33,24 @@ const DEFAULT_ACCOUNTS = [
 ];
 let accounts = loadAccounts();
 function loadAccounts(){
+  let stored = [];
   try{
     const raw = localStorage.getItem("kubli-accounts");
     if(raw){
       const parsed = JSON.parse(raw);
-      if(Array.isArray(parsed) && parsed.length) return parsed;
+      if(Array.isArray(parsed)) stored = parsed;
     }
   }catch(e){}
-  return DEFAULT_ACCOUNTS.map(a=>({...a}));
+  // Guarantee the built-in demo/staff accounts always exist. Without this,
+  // removing one (or any stale/edited localStorage state) permanently breaks
+  // that login with no way to recover it from the UI.
+  const merged = [...stored];
+  DEFAULT_ACCOUNTS.forEach(def=>{
+    if(!merged.some(a=>a.email.toLowerCase()===def.email.toLowerCase())){
+      merged.push({...def});
+    }
+  });
+  return merged;
 }
 function saveAccounts(){
   localStorage.setItem("kubli-accounts", JSON.stringify(accounts));
@@ -82,6 +92,14 @@ document.querySelectorAll('.role-pick-btn').forEach(b=>{
   b.addEventListener('click', ()=>{
     document.querySelectorAll('.role-pick-btn').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
+    if(authMode === 'signin'){
+      const demo = DEFAULT_ACCOUNTS.find(a=>a.role===b.dataset.role);
+      if(demo){
+        document.getElementById('li-email').value = demo.email;
+        document.getElementById('li-password').value = demo.password;
+        document.getElementById('li-error').textContent = "";
+      }
+    }
   });
 });
 
@@ -117,8 +135,8 @@ document.getElementById('li-submit').addEventListener('click', ()=>{
     if(pass.length < 6){ errEl.textContent = "Password must be at least 6 characters."; return; }
     if(pass !== pass2){ errEl.textContent = "Passwords do not match."; return; }
     if(accounts.some(a=>a.email.toLowerCase()===email.toLowerCase())){
-      errEl.textContent = "That email already has an account. Sign in instead.";
       setAuthMode("signin");
+      errEl.textContent = "That email already has an account. Sign in instead.";
       return;
     }
     const neu = {name, email, password:pass, role:"User", status:"Active"};
@@ -130,8 +148,9 @@ document.getElementById('li-submit').addEventListener('click', ()=>{
 
   const existing = accounts.find(a=>a.email.toLowerCase()===email.toLowerCase());
   if(!existing){
-    errEl.textContent = "No account yet for this email. Create one first.";
     setAuthMode("signup");
+    errEl.textContent = "No account yet for this email. Create one first.";
+    document.getElementById('li-email').value = email;
     return;
   }
   if(existing.password && existing.password !== pass){
