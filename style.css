@@ -146,6 +146,7 @@
     font-size:0.72rem;padding:8px 12px;border-radius:2px;cursor:pointer;
   }
   .locate-btn:hover{background:var(--canopy-light);}
+  .location-map{height:260px;margin-top:10px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--parchment-dark);}
   .coords-out{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--forest-deep);margin-top:6px;}
 
   .preview-classify{

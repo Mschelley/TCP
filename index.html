@@ -6,6 +6,7 @@
 <title>KUBLI Prototype — Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -187,6 +188,7 @@
         <label>GPS location</label>
         <button type="button" class="locate-btn" id="u-locate">📍 Use my current location</button>
         <div class="coords-out" id="u-coords">No coordinates captured yet.</div>
+        <div id="u-map" class="location-map" aria-label="Choose tree location on map"></div>
 
         <fieldset style="margin-top:16px;">
           <legend>Observed condition (select all that apply)</legend>
@@ -290,6 +292,8 @@
 <footer>KUBLI prototype — in-session data only, for demonstration of the reporting → risk classification → permit routing workflow. </footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="script.js"></script>
 </body>
 </html>
